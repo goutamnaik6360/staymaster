@@ -1,0 +1,1 @@
+{"name":"carepoint-hospital","version":"1.0.0","private":true,"description":"Simple local CarePoint hospital management app","main":"src/server.js","scripts":{"start":"node src/server.js"},"engines":{"node":">=20"}}
