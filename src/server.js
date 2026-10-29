@@ -6,7 +6,7 @@ const crypto = require('node:crypto');
 const ROOT = __dirname;
 const PUBLIC = path.join(ROOT, 'public');
 const DATA_FILE = path.join(ROOT, 'data.json');
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 const sessions = new Map();
 function today(offset = 0) { const d = new Date(); d.setDate(d.getDate() + offset); return d.toISOString().slice(0, 10); }
 function initialData() { return { users:[], patients:[], doctors:[], appointments:[], beds:[], admissions:[], invoices:[], nextPatient:1, nextAppointment:1, nextAdmission:1, nextInvoice:1, nextDoctor:1, nextBed:1 }; }
