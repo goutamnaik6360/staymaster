@@ -37,8 +37,49 @@ function api(req,res,url) {
     if(req.method==='GET'&&url==='/api/session') { const s=sessionFor(req);return send(res,200,{user:s?.user||null,csrf:s?.csrf||null,setupRequired:data.users.length===0}); }
     if(req.method==='POST'&&url==='/api/logout') { const s=sessionFor(req);const sid=getCookie(req,'carepoint.sid');if(sid)sessions.delete(sid);return send(res,200,{ok:true},{'Set-Cookie':'carepoint.sid=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0'}); }
     const session=sessionFor(req);if(!session)return send(res,401,{error:'Please sign in.'});
-    if(req.method!=='GET') { const origin=req.headers.origin; if(origin&&origin!==`http://${req.headers.host}`)return send(res,403,{error:'Cross-origin request blocked.'});if(req.headers['x-csrf-token']!==session.csrf)return send(res,403,{error:'Refresh the page and try again.'}); }
-    if(req.method==='GET'&&url==='/api/dashboard')return send(res,200,{patients:data.patients.length,doctors:data.doctors.length,appointments:data.appointments.filter(a=>a.date===today()&&a.status!=='Cancelled').length,beds:data.beds.length,occupied:data.beds.filter(b=>b.status==='Occupied').length,unpaid:data.invoices.filter(i=>i.status==='Unpaid').reduce((n,i)=>n+Number(i.amount),0),today:today(),appointmentsList:data.appointments.filter(a=>a.date>=today()&&a.status!=='Cancelled').sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,8).map(a=>({...a,patient:data.patients.find(p=>p.id===a.patientId)?.name||''}))});
+    if (req.method !== 'GET') {
+    const origin = req.headers.origin;
+    const forwardedProto = req.headers['x-forwarded-proto'];
+    const expectedOrigin = `${forwardedProto === 'https' ? 'https' : 'http'}://${req.headers.host}`;
+
+    if (origin && origin !== expectedOrigin) {
+        return send(res, 403, { error: 'Cross-origin request blocked.' });
+    }
+
+    if (req.headers['x-csrf-token'] !== session.csrf) {
+        return send(res, 403, { error: 'Refresh the page and try again.' });
+    }
+}
+
+
+if (req.method !== 'GET') {
+    const origin = req.headers.origin;
+    const forwardedProto = req.headers['x-forwarded-proto'];
+    const expectedOrigin = `${forwardedProto === 'https' ? 'https' : 'http'}://${req.headers.host}`;
+
+    if (origin && origin !== expectedOrigin) {
+        return send(res, 403, { error: 'Cross-origin request blocked.' });
+    }
+
+    if (req.headers['x-csrf-token'] !== session.csrf) {
+        return send(res, 403, { error: 'Refresh the page and try again.' });
+    }
+}
+if (req.method !== 'GET') {
+    const origin = req.headers.origin;
+    const forwardedProto = req.headers['x-forwarded-proto'];
+    const expectedOrigin = `${forwardedProto === 'https' ? 'https' : 'http'}://${req.headers.host}`;
+
+    if (origin && origin !== expectedOrigin) {
+        return send(res, 403, { error: 'Cross-origin request blocked.' });
+    }
+
+    if (req.headers['x-csrf-token'] !== session.csrf) {
+        return send(res, 403, { error: 'Refresh the page and try again.' });
+    }
+}
+
+if(req.method==='GET'&&url==='/api/dashboard')return send(res,200,{patients:data.patients.length,doctors:data.doctors.length,appointments:data.appointments.filter(a=>a.date===today()&&a.status!=='Cancelled').length,beds:data.beds.length,occupied:data.beds.filter(b=>b.status==='Occupied').length,unpaid:data.invoices.filter(i=>i.status==='Unpaid').reduce((n,i)=>n+Number(i.amount),0),today:today(),appointmentsList:data.appointments.filter(a=>a.date>=today()&&a.status!=='Cancelled').sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,8).map(a=>({...a,patient:data.patients.find(p=>p.id===a.patientId)?.name||''}))});
     if(req.method==='GET'&&url==='/api/patients')return send(res,200,data.patients);
     if(req.method==='POST'&&url==='/api/patients'){const b=await body(req);if(!safeText(b.name,100))return send(res,400,{error:'Patient name is required.'});const p={id:Date.now(),patientNo:`CP-${data.nextPatient++}`,name:safeText(b.name,100),dob:safeText(b.dob,10),gender:safeText(b.gender,20),phone:safeText(b.phone,30),email:safeText(b.email,200),bloodType:safeText(b.bloodType,5),emergency:safeText(b.emergency,120)};data.patients.unshift(p);saveData(data);return send(res,201,p);}
     if(req.method==='GET'&&url==='/api/doctors')return send(res,200,data.doctors);
