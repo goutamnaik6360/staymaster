@@ -1,0 +1,24 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "Goutam",
+      "email": "naikgoutam948@gmail.com",
+      "role": "Administrator",
+      "salt": "0a84d70288dfefb8c9144a23e57dc1e9",
+      "hash": "f9e6d96f186f0c90e0f5f41f7f44904bd25b7ae7222d7f691e8cde0762b491a18c902a19ba0a60ded66b5907350e5378fcd33de1d74d389cef33f4015f0253c3"
+    }
+  ],
+  "patients": [],
+  "doctors": [],
+  "appointments": [],
+  "beds": [],
+  "admissions": [],
+  "invoices": [],
+  "nextPatient": 1,
+  "nextAppointment": 1,
+  "nextAdmission": 1,
+  "nextInvoice": 1,
+  "nextDoctor": 1,
+  "nextBed": 1
+}
